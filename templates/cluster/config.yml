@@ -1,5 +1,7 @@
-name: MariaDB Galera Cluster
+name: Galera Cluster
 description: |
-    (Experimental) Synchronous multi-master cluster for MariaDB
+    Synchronous multi-master cluster for MariaDB
 version: 10.14.14
 category: Databases
+maintainer: "Dodik Gaghan <dodik@akasena.com>"
+license: Apache License
