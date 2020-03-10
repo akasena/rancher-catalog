@@ -1,0 +1,18 @@
+cluster:
+  image: registry.akasena.com/kelola/galera-mh:latest
+  labels:
+    io.rancher.container.hostname_override: container_name
+    io.rancher.scheduler.affinity:container_label_soft_ne: io.rancher.stack_service.name=$${stack_name}/$${service_name}
+  volumes:
+    - '/data/mysql:/var/lib/mysql'
+  stdin_open: true
+  tty: true
+
+cluster-lb:
+  expose:
+  - 3306:3306/tcp
+  tty: true
+  image: rancher/load-balancer-service
+  links:
+  - cluster:cluster
+  stdin_open: true
