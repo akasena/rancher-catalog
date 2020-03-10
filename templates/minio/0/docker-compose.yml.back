@@ -1,0 +1,41 @@
+version: '2'
+volumes:
+  minio-scheduler-setting:
+    driver: local
+    per_container: true
+services:
+  rancher-cattle-metadata:
+    image: webcenter/rancher-cattle-metadata:1.0.1
+    network_mode: none
+    volumes:
+    - minio-scheduler-setting:/opt/scheduler
+    labels:
+      io.rancher.container.start_once: 'true'
+      io.rancher.scheduler.affinity:container_label_soft_ne: io.rancher.stack_service.name=$${stack_name}/$${service_name}
+      io.rancher.container.hostname_override: container_name
+  minio-server:
+    image: registry.akasena.com/kelola/minio:latest
+    environment:
+      CONFD_BACKEND: env
+      CONFD_NODES: ''
+      CONFD_PREFIX_KEY: /portal
+      MINIO_ACCESS_KEY: AKIAXHU7FQLYNAUP5KGO
+      MINIO_SECRET_KEY: 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
+      MINIO_DISKS_0: disk0
+      MINIO_DISKS_1: disk1
+      MINIO_DISKS_2: disk2
+      MINIO_DISKS_3: disk3
+      TLS_FQDN: ''
+    volumes:
+    - minio-scheduler-setting:/opt/scheduler
+    - /data/minio/disk0:/data/disk0
+    - /data/minio/disk1:/data/disk1
+    - /data/minio/disk2:/data/disk2
+    - /data/minio/disk3:/data/disk3
+    tty: true
+    labels:
+      io.rancher.scheduler.affinity:host_label: type=core
+      io.rancher.scheduler.affinity:container_label_soft_ne: io.rancher.stack_service.name=$${stack_name}/$${service_name}
+      io.rancher.sidekicks: rancher-cattle-metadata
+      io.rancher.container.hostname_override: container_name
+      io.rancher.container.pull_image: always
